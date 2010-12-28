@@ -51,7 +51,10 @@ Encapsulated PostScript support.
 Using
 =====
 
-To see a list of alart's command-line options, run ``alart --help``.
+To see a list of alart's command-line options, run ``alart
+--help``. To see its module help, run ``pydoc alart``. Example
+programs using alart as a module can be found in the ``examples``
+directory.
 
 
 Developing

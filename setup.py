@@ -1,5 +1,17 @@
 #!/usr/bin/env python
 from distutils.core import setup
+import os.path
+import tempfile
+
+selfdir = os.path.dirname(os.path.realpath(__file__))
+
+module = open(os.path.join(selfdir, 'alart.py'))
+scriptname = os.path.join(tempfile.gettempdir(), 'alart')
+script = open(scriptname, 'w')
+script.write(module.read())
+script.close()
+module.close()
+
 
 readme = open('README.txt').read()
 conf = dict(
@@ -9,7 +21,7 @@ conf = dict(
     author_email='ns@metanohi.org',
     package_dir={'': '.'},
     py_modules = ['alart'],
-    scripts=['alart'],
+    scripts=[scriptname],
     url='http://metanohi.org/projects/alart/',
     license='COPYING.txt',
     description='Generate pseudo-random art',
