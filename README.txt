@@ -3,8 +3,9 @@
 alart
 =====
 
-alart is a pseudo-random art generator. Example images can be found
-online on http://metanohi.org/projects/alart/images/
+alart is a pseudo-random art generator. It generates
+silhouettes. Example images can be found online on
+http://metanohi.org/projects/alart/images/
 
 
 License
