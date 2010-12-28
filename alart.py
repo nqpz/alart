@@ -104,8 +104,9 @@ class Alart(object):
         """
         ``size`` should be a tuple of (width, height), and ``formats``
         should be a tuple of formats. To use a random number generator
-        other than Python's default one, set random_holder to an
-        object with a random() function and a randint() function.
+        other than Python's default one, set ``random_holder`` to an
+        object with a ``random()`` function and a ``randint()``
+        function.
         """
         self.size = size
         for x in formats:
@@ -244,7 +245,6 @@ class Alart(object):
 
     def get_points(self):
         """Calculate and return the points needed for silhouette"""
-        max_size = [x / 2 for x in self.size]
         choose = random.randint(-1, 3)
         if choose <= 0:
             points_num = random.randint(100, 200)
@@ -283,7 +283,10 @@ class Alart(object):
         # | |___________| |
         #    __5__ __1__
         #
-        # State 1 and 5 are technically the same. 
+        # State 1 and 5 are technically the same.
+        # For each angle, the longest length from the center to the
+        # side of the rectangle is calculated. A random length is then
+        # chosen, after which a position is calculated and yielded.
         for i in xrange(points_num):
             angle = i * angle_change
             if state == 1:
@@ -424,10 +427,12 @@ class Alart(object):
 
 
 
-def command_line_entry(args=None):
+def command_line_entry(args=None, random_holder=None):
     """
     Allow easy use from the command-line. If ``args`` is None,
-    ``sys.argv[1:]`` is be used
+    ``sys.argv[1:]`` is be used. ``random_holder`` can be set to use
+    other random functions than Python's internal. A special random
+    function cannot be set using the command-line.
     """
     import sys
     from optparse import OptionParser
@@ -527,7 +532,7 @@ set the type of a OUTPUT (should be set just before the OUTPUT)
     formats = tuple(set(formats))
 
     try:
-        alart = Alart(size, formats)
+        alart = Alart(size, formats, random_holder)
     except ValueError, e:
         parser.error(e)
 
