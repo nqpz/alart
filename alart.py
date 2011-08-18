@@ -79,6 +79,9 @@ class MultiContext(object):
     def add(self, context):
         self.contexts.append(context)
 
+    def clear(self):
+        self.contexts = []
+
     def _generic(self, *args):
         for ctx in self.contexts:
             ctx.context.__getattribute__(self.func)(*args)
@@ -148,25 +151,8 @@ class Alart(object):
                 self.png_context = self.create_image_context()
                 self.context.add(self.png_context)
 
-        if 'svg' in self.formats:
-            self.svg_context = self.create_svg_context()
-            self.context.add(self.svg_context)
-
-        if 'pdf' in self.formats:
-            self.pdf_context = self.create_pdf_context()
-            self.context.add(self.pdf_context)
-
-        if 'ps' in self.formats:
-            self.ps_context = self.create_ps_context()
-            self.context.add(self.ps_context)
-
-        if 'eps' in self.formats:
-            try:
-                self.eps_context = self.create_ps_context(True)
-            except AttributeError, e:
-                raise OldVersion('version of cairo too old; %s' % e)
-            self.context.add(self.eps_context)
-
+        self._add_vector_contexts()
+        
         # Draw it
         self.draw()
 
@@ -183,6 +169,7 @@ class Alart(object):
                         done = True
                     elif event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_r:
+                            self.clear()
                             self.draw()
                         elif event.key == pygame.K_ESCAPE:
                             done = True
@@ -213,6 +200,37 @@ class Alart(object):
 
         return data
 
+    def _add_vector_contexts(self):
+        self.vclen = 0
+        if 'svg' in self.formats:
+            self.svg_context = self.create_svg_context()
+            self.context.add(self.svg_context)
+            self.vclen += 1
+
+        if 'pdf' in self.formats:
+            self.pdf_context = self.create_pdf_context()
+            self.context.add(self.pdf_context)
+            self.vclen += 1
+
+        if 'ps' in self.formats:
+            self.ps_context = self.create_ps_context()
+            self.context.add(self.ps_context)
+            self.vclen += 1
+
+        if 'eps' in self.formats:
+            try:
+                self.eps_context = self.create_ps_context(True)
+            except AttributeError, e:
+                raise OldVersion('version of cairo too old; %s' % e)
+            self.context.add(self.eps_context)
+            self.vclen += 1
+
+    def clear(self):
+        # Remove vector contexts
+        self.context.contexts = self.context.contexts[:self.vclen]
+        # Add new versions
+        self._add_vector_contexts()
+            
     def get_context_from_pg_surf(self, pygame_surf):
         width, height = pygame_surf.get_size()
         cairo_surface = cairo.ImageSurface.create_for_data(
