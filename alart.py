@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# alart: an alarming, alerting pseudo-random art generator
-# Copyright (C) 2010  Niels Serup
+# alart: a pseudo-random art generator
+# Copyright (C) 2010, 2011  Niels Serup
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-## Maintainer: Niels Serup <ns@metanohi.org>
+## Maintainer: Niels Serup <ns@metanohi.name>
 
 """
 alart generates pseudo-random art. You can adjust only what size the
@@ -201,21 +201,17 @@ class Alart(object):
         return data
 
     def _add_vector_contexts(self):
-        self.vclen = 0
         if 'svg' in self.formats:
             self.svg_context = self.create_svg_context()
             self.context.add(self.svg_context)
-            self.vclen += 1
 
         if 'pdf' in self.formats:
             self.pdf_context = self.create_pdf_context()
             self.context.add(self.pdf_context)
-            self.vclen += 1
 
         if 'ps' in self.formats:
             self.ps_context = self.create_ps_context()
             self.context.add(self.ps_context)
-            self.vclen += 1
 
         if 'eps' in self.formats:
             try:
@@ -223,11 +219,24 @@ class Alart(object):
             except AttributeError, e:
                 raise OldVersion('version of cairo too old; %s' % e)
             self.context.add(self.eps_context)
-            self.vclen += 1
 
     def clear(self):
-        # Remove vector contexts
-        self.context.contexts = self.context.contexts[:self.vclen]
+        if 'svg' in self.formats:
+            self.svg_context.finish()
+            self.context.contexts.remove(self.svg_context)
+
+        if 'pdf' in self.formats:
+            self.pdf_context.finish()
+            self.context.contexts.remove(self.pdf_context)
+
+        if 'ps' in self.formats:
+            self.ps_context.finish()
+            self.context.contexts.remove(self.ps_context)
+
+        if 'eps' in self.formats:
+            self.eps_context.finish()
+            self.context.contexts.remove(self.eps_context)
+
         # Add new versions
         self._add_vector_contexts()
             
@@ -444,7 +453,6 @@ class Alart(object):
         self.end()
 
 
-
 def command_line_entry(args=None, random_holder=None):
     """
     Allow easy use from the command-line. If ``args`` is None,
@@ -463,8 +471,8 @@ def command_line_entry(args=None, random_holder=None):
         usage='Usage: %prog [OPTION]... [OUTPUT]...',
         description='Generate pseudo-random art',
         version='''\
-alart 0.1.0 "Ablaze"
-Copyright (C) 2010  Niels Serup
+alart 0.1.1 "Fox"
+Copyright (C) 2010, 2011  Niels Serup
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.\
