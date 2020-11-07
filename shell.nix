@@ -1,5 +1,6 @@
+# Use this file with nix-shell or similar tools; see https://nixos.org/
 with import <nixpkgs> {};
-stdenv.mkDerivation {
-    name = "alart";
+
+mkShell {
     buildInputs = [ (python27.withPackages (ps: with ps; [ pygame pycairo ])) ];
 }
